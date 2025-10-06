@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blackjack SWC</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="backdrop-glow"></div>
+  <main class="table-wrap">
+    <header class="header">
+      <h1>Blackjack SWC</h1>
+      <div class="controls-row">
+        <label>Decks
+          <select id="deckCount">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="4" selected>4</option>
+            <option value="6">6</option>
+            <option value="8">8</option>
+          </select>
+        </label>
+        <div class="balance">
+          <span>Balance</span>
+          <strong id="balance">$ 0</strong>
+          <button id="topUp" class="btn small">Top up $ 1 Million</button>
+        </div>
+        <div class="sound">
+          <label class="switch">
+            <input type="checkbox" id="sfxToggle" checked />
+            <span class="slider"></span>
+          </label>
+          <span class="switch-label">Sound</span>
+        </div>
+      </div>
+    </header>
+
+    <section class="felt">
+      <div class="hand-row">
+        <div class="hand-header">
+          <h2>Dealer</h2>
+          <div id="dealerTotal" class="total">0</div>
+        </div>
+        <div id="dealerCards" class="cards"></div>
+      </div>
+
+      <div class="divider-glow"></div>
+
+      <div class="hand-row">
+        <div class="hand-header">
+          <h2>Player</h2>
+          <div id="playerTotal" class="total">0</div>
+        </div>
+        <div id="playerCards" class="cards"></div>
+
+        <div class="actions">
+          <div class="bet-box">
+            <label>Bet</label>
+            <div class="bet-controls">
+              <button id="betMinus" class="btn circle">−</button>
+              <input id="betAmount" type="number" min="10" step="10" value="50" />
+              <button id="betPlus" class="btn circle">+</button>
+            </div>
+          </div>
+          <div class="primary-actions">
+            <button id="dealBtn" class="btn primary">Deal</button>
+            <button id="hitBtn" class="btn action" disabled>Hit</button>
+            <button id="standBtn" class="btn action" disabled>Stand</button>
+            <button id="doubleBtn" class="btn warn" disabled>Double</button>
+            <button id="newRoundBtn" class="btn" disabled>New round</button>
+          </div>
+        </div>
+
+        <div id="message" class="message">Place your bet and press Deal</div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p>Dealer stands on all seventeen. Blackjacks pay three to two.</p>
+    </footer>
+
+    <div id="resultOverlay" class="result-overlay hidden">
+      <div class="result-card">
+        <div class="result-title" id="resultTitle">You win</div>
+        <div class="result-sub" id="resultSub">Dealer bust</div>
+        <button id="overlayBtn" class="btn primary">Play again</button>
+      </div>
+    </div>
+  </main>
+
+
+  <audio id="sfx-flip" src="flip.wav" preload="auto"></audio>
+  <audio id="sfx-chip" src="chip.wav" preload="auto"></audio>
+  <audio id="sfx-win" src="win.wav" preload="auto"></audio>
+
+
+  <script>
+    // Unlock HTMLAudio on first user interaction
+    window.__audioUnlocked = false;
+
+    function unlockAudioOnce() {
+      if (window.__audioUnlocked) return;
+      const ids = ["sfx-flip", "sfx-chip", "sfx-win"];
+      ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        try {
+          el.muted = true;
+          el.play().then(() => {
+            el.pause();
+            el.currentTime = 0;
+            el.muted = false;
+          }).catch(() => {});
+        } catch (e) {}
+      });
+      window.__audioUnlocked = true;
+      document.removeEventListener("pointerdown", unlockAudioOnce, {
+        capture: true
+      });
+      document.removeEventListener("keydown", unlockAudioOnce, {
+        capture: true
+      });
+    }
+    document.addEventListener("pointerdown", unlockAudioOnce, {
+      capture: true,
+      passive: true
+    });
+    document.addEventListener("keydown", unlockAudioOnce, {
+      capture: true
+    });
+  </script>
+  <script src="app.js"></script>
+
+</body>
+
+</html>
